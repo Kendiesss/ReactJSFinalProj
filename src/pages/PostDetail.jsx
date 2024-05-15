@@ -1,32 +1,41 @@
-import PostAuthor from "../components/PostAuthor"
-import { Link } from 'react-router-dom'
-import postDtailImage from '../assets/blogImage1.jpg'
+// PostDetails.jsx
 
-export default function PostDetail() {
+import React from "react";
+import { useParams, Link } from "react-router-dom";
+
+export default function PostDetails() {
+  const { id } = useParams();
+  const createdPosts = JSON.parse(localStorage.getItem("createdPosts")) || [];
+  const post = createdPosts.find((post) => post.id.toString() === id);
+
+  if (!post) {
+    return <h2 className="error-center">Post not found</h2>;
+  }
+
+  const handleDelete = () => {
+    const updatedPosts = createdPosts.filter((post) => post.id.toString() !== id);
+    localStorage.setItem("createdPosts", JSON.stringify(updatedPosts));
+    window.location.href = "/"; // Redirect to home after deletion
+  };
+
   return (
     <section>
-      <div className='container PostDtail-container'>
-        <div className='postdtail-top'>
-          <PostAuthor/>
-          <div className="postdtail-buttons">
-            <Link to={`/posts/werwer/edit`} className="btn btn-sm btn-primary">
-              Edit
-            </Link>
-            <Link to={`/posts/werwer/delete`} className="btn btn-sm btn-primary">
-              Delete
-            </Link>
-          </div>
-        </div>
-        <h1>Lorem ipsum dolor sit, amet consectetur adipisicing elit.</h1>
-        <div className="postdtail-image">
-          <img src={postDtailImage} alt="" />
-        </div>
-        <div className="postdtail-para">
-        <p>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Hic amet dolorem recusandae labore voluptate veniam exercitationem esse, maxime beatae itaque. Delectus accusamus alias consequuntur deserunt in impedit culpa quis! Ex!
-        </p>
+      <div className="container PostDetail-container">
+        <h1>{post.title}</h1>
+        <p>{post.des}</p>
+        <img src={post.Image} alt="" />
+        <p>Category: {post.category}</p>
+        <p>Author: {post.audthorId}</p>
+        {/* Edit and Delete Buttons */}
+        <div>
+          <Link to={`/edit/${id}`} className="btn btn-sm btn-primary">
+            Edit
+          </Link>
+          <button onClick={handleDelete} className="btn btn-sm btn-primary">
+            Delete
+          </button>
         </div>
       </div>
     </section>
-  )
+  );
 }

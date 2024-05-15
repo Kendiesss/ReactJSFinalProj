@@ -43,6 +43,9 @@ export default function Router() {
                 <Route path='/posts/:id' element={<PostDetail/>}/>
                 <Route path='/register' element={<Register/>}/>
                 <Route path='/profile/:id' element={<UserProfile/>}/>
+                <Route path='/postdetails/:id' element={<PostDetail/>}/>
+                <Route path='/edit/:id' element={<EditPosts/>}/>
+                <Route path="/categoryposts/:category" element={<CategoryPosts/>}/>
             </Routes>
         <Footer/>
     </BrowserRouter>

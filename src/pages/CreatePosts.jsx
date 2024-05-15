@@ -1,53 +1,74 @@
-import { useState } from "react"
-import ReactQuill from 'react-quill'
-import 'react-quill/dist/quill.snow.css'
+import React, { useState } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 export default function CreatePosts() {
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
+  const [thumbImage, setThumbImage] = useState(null);
 
-const [title, setTitle] = useState('')
-const [category, setCategory] = useState('')
-const [description, setDescription] = useState('')
-const [thumbImage, setThumbImage] = useState('')
+  const postCategories = [
+    "",
+    "ICS Student Council",
+    "CSS",
+    "ISS",
+    "SITE",
+    "CICS-CNAG",
+    "TGS",
+    "CICS-PAX"
+  ];
 
-const postCategories = ['ICS Student Council', 'CSS', 'ISS', 'SITE', 'CICS-CNAG', 'TGS', 'CICS-PAX'];
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    const newPost = {
+      id: Date.now(),
+      Image: thumbImage,
+      category,
+      audthorId: 2,
+      title,
+      des: description
+    };
+    const existingPosts = JSON.parse(localStorage.getItem("createdPosts")) || [];
+    const updatedPosts = [newPost, ...existingPosts];
+    localStorage.setItem("createdPosts", JSON.stringify(updatedPosts));
+    setTitle("");
+    setCategory("");
+    setDescription("");
+    setThumbImage(null);
+  };
 
-
-const modules = {
-  toolbar: [
-    [{'header' : [1,2,3,4,5,6, false]}],
-    ['bold', 'italic', 'underline','strike', 'blockquote'],
-    [{'list':'ordered'},{'list':'bullet'},{'indent':'+1'},{'indent':'-1'}],
-    ['link','image']
-  ]
-}
-
-const formats = [
-  'header',
-  'bold','italic','underline','blockquote',
-  'list','bullet','indent',
-  'link','image'
-]
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setThumbImage(URL.createObjectURL(file));
+  };
 
   return (
-    <section className='createPosts'>
-    <div className='container form-container createPosts-container'>
-      <h2>Create Posts</h2>
-      <form action="" className="form createPosts-form">
-        <p className="form-message">This is a invalid message</p>
-        <input type="text" placeholder="Title" name="title" value={title} onChange={e => setTitle(e.target.value)} autoFocus />
-        <select name="category" value={category} onChange={e => setCategory(e.target.value)}>
-          {
-            postCategories.map(cat => <option key={cat}>{cat}</option>)
-          }
-        </select>
+    <section className="createPosts">
+      <div className="container form-container createPosts-container">
+        <h2>Create Posts</h2>
+        <form onSubmit={handleFormSubmit} className="form createPosts-form">
+          <input
+            type="text"
+            placeholder="Title"
+            name="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            autoFocus
+          />
+          <select name="category" value={category} onChange={(e) => setCategory(e.target.value)}>
+            {postCategories.map((cat) => (
+              <option key={cat}>{cat}</option>
+            ))}
+          </select>
 
-        <ReactQuill modules={modules} formats={formats} value={description} onChange={e => setDescription(e.target.value)}/>
+          <ReactQuill modules={{ toolbar: [["bold", "italic", "underline"], ["link", "image"]] }} value={description} onChange={setDescription} />
 
-        <input type="file" value={thumbImage} onChange={e => setThumbImage(e.target.value)} accept='png, jpg, jpeg' />
+          <input type="file" onChange={handleImageChange} accept="image/*" />
 
-        <button type="submit" className="btn btn-primary">Create</button>
-      </form>
-    </div>
-  </section>
-  )
+          <button type="submit">Create</button>
+        </form>
+      </div>
+    </section>
+  );
 }
